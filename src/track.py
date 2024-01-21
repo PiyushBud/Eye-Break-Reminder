@@ -1,10 +1,12 @@
 import cv2
 import numpy as np
-import os
+import tkinter as tk
 
 FACE_PATH = "../res/haarcascade_frontalface_default.xml"
-EYE_PATH = "../res/haarcascade_eye.xml"
+EYE_NOGLASSES_PATH = "../res/haarcascade_eye.xml"
 EYE_GLASSES_PATH = "../res/haarcascade_eye_tree_eyeglasses.xml"
+
+EYE_PATH = EYE_GLASSES_PATH
 THRESHOLD = 65
 
 CAMERA_WINDOW = 'image'
@@ -71,6 +73,9 @@ def find_contours(img):
     threshold = cv2.getTrackbarPos('threshold', GRAY_WINDOW)
     _, thresh_img = cv2.threshold(img_gray, threshold, 255, cv2.THRESH_BINARY)
     contours, _ = cv2.findContours(thresh_img, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+    for contour in contours:
+        approx = cv2.approxPolyDP(contour, 3, True)
+        center, radius = cv2.minEnclosingCircle(approx)
     cv2.drawContours(img, contours, -1, (0,255,0), 3)
 
 def nothing(val):
@@ -89,7 +94,7 @@ def thresh_frame(img):
 
 def main():
     face_cascade = cv2.CascadeClassifier(FACE_PATH)
-    eye_glasses_cascade = cv2.CascadeClassifier(EYE_GLASSES_PATH)
+    eye_glasses_cascade = cv2.CascadeClassifier(EYE_PATH)
 
     detector_params = cv2.SimpleBlobDetector_Params()
     detector_params.filterByArea = True
@@ -118,6 +123,28 @@ def main():
     cap.release()
     cv2.destroyAllWindows()
 
+def single_image():
+    img = cv2.imread("../res/sample_picture2.jpg")
+    face_cascade = cv2.CascadeClassifier(FACE_PATH)
+    eye_cascade = cv2.CascadeClassifier(EYE_PATH)
+    face = find_face(img, face_cascade)
+    if face is not None:
+        eyes = find_eyes(face, eye_cascade)
+
+    cv2.namedWindow(CAMERA_WINDOW)
+    cv2.namedWindow(GRAY_WINDOW)
+
+    for eye in eyes:
+        img_gray = cv2.cvtColor(eye, cv2.COLOR_BGR2GRAY)
+        threshold = 64
+        _, thresh_img = cv2.threshold(img_gray, threshold, 255, cv2.THRESH_BINARY)
+        contours, _ = cv2.findContours(thresh_img, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+        for contour in contours:
+            approx = cv2.approxPolyDP(contour, 3, True)
+            center, radius = cv2.minEnclosingCircle(approx)
+        cv2.drawContours(img, contours, -1, (0,255,0), 3)
+    cv2.imshow(CAMERA_WINDOW, img)
+    cv2.imshow(GRAY_WINDOW, thresh_frame(frame).copy())
 
 if __name__ == "__main__":
     main()
