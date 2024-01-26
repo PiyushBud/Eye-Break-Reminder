@@ -139,7 +139,7 @@ def single_image():
                 for contour in contours:
                     approx = cv2.approxPolyDP(contour, 3, True)
                     center, radius = cv2.minEnclosingCircle(approx)
-                cv2.drawContours(img, contours, -1, (0,255,0), 3)
+                cv2.drawContours(img, contours, -1, (0,0,255), 1)
 
     else:
         print("Could not find face.")
@@ -156,4 +156,4 @@ def single_image():
     cv2.destroyAllWindows()
 
 if __name__ == "__main__":
-    single_image()
+    main()
