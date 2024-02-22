@@ -1,13 +1,16 @@
-import cv2, multiprocessing, classes
+import cv2, multiprocessing, sys
 import mediapipe as mp
 import tkinter as tk
+from lib import classes
 from tkinter import ttk
 from PIL import ImageTk, Image
 from datetime import datetime
 from playsound import playsound
 from pathlib import Path
 
-MODEL_PATH = str(Path("res", "face_landmarker.task"))
+MODEL_PATH = str((Path(__file__).parent).joinpath(Path("res", "face_landmarker.task")))
+BG_PATH = str((Path(__file__).parent).joinpath(Path("res", "bg.JPG")))
+ALARM_PATH = str((Path(__file__).parent).joinpath(Path("res", "clock-alarm.mp3")))
 
 time_to_seconds = {"5 sec": 5, "1 min": 60, "5 min": 300, "10 min": 600,\
                      "15 min": 900, "30 min": 1800, "45 min": 2700, "1 hr": 3600}
@@ -122,6 +125,11 @@ def start_cam(button_start: tk.Button):
         mode_looking = False
         button_start["text"] = "Start"
         button_calibrate["state"] = "disabled"
+        img_arr = cv2.cvtColor(cv2.imread(BG_PATH), cv2.COLOR_BGR2RGBA)
+        img = Image.fromarray(img_arr)
+        imgtk = ImageTk.PhotoImage(image=img)
+        label_cam.imgtk = imgtk
+        label_cam.configure(image=imgtk)
 
 # Calculate
 def get_max_screen_time(combo_times):
@@ -174,8 +182,7 @@ def push_reminder():
     button_exit = tk.Button(master=remind_window, text="Quit", command= lambda : close_reminder_window(remind_window))
     button_exit.grid(row=1, column=0, padx=10, pady=5)
 
-    path = Path(".", "..", "res", "clock-alarm.mp3")
-    p = multiprocessing.Process(target=loop_alarm, args=(str(path),))
+    p = multiprocessing.Process(target=loop_alarm, args=(ALARM_PATH,))
     p.start()
 
 def loop_alarm(path):
@@ -257,7 +264,7 @@ def tracking_menu():
     frame_picture.columnconfigure([0,1], weight=1)
 
     # Initial picture
-    img_arr = cv2.cvtColor(cv2.imread("../res/bg.JPG"), cv2.COLOR_BGR2RGBA)
+    img_arr = cv2.cvtColor(cv2.imread(BG_PATH), cv2.COLOR_BGR2RGBA)
     img = Image.fromarray(img_arr)
     imgtk = ImageTk.PhotoImage(image=img)
 

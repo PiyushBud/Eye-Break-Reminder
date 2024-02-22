@@ -2,10 +2,10 @@
 
 
 a = Analysis(
-    ['src\\track_mediapipe.py'],
-    pathex=[],
+    ['track_mediapipe.py'],
+    pathex=['lib'],
     binaries=[],
-    datas=[],
+    datas=[('res/bg.JPG', 'res'), ('res/clock-alarm.mp3', 'res'), ('res/face_landmarker.task', 'res')],
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},
