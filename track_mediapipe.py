@@ -8,9 +8,14 @@ from datetime import datetime
 from playsound import playsound
 from pathlib import Path
 
-MODEL_PATH = str((Path(__file__).parent).joinpath(Path("res", "face_landmarker.task")))
-BG_PATH = str((Path(__file__).parent).joinpath(Path("res", "bg.JPG")))
-ALARM_PATH = str((Path(__file__).parent).joinpath(Path("res", "clock-alarm.mp3")))
+if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
+    MODEL_PATH = str((Path(sys._MEIPASS)).joinpath(Path("res", "face_landmarker.task")))
+    BG_PATH = str((Path(sys._MEIPASS)).joinpath(Path("res", "bg.JPG")))
+    ALARM_PATH = str((Path(sys._MEIPASS)).joinpath(Path("res", "clock-alarm.mp3")))
+else:
+    MODEL_PATH = str((Path(__file__)).joinpath(Path("res", "face_landmarker.task")))
+    BG_PATH = str((Path(__file__).parent).joinpath(Path("res", "bg.JPG")))
+    ALARM_PATH = str((Path(__file__).parent).joinpath(Path("res", "clock-alarm.mp3")))
 
 time_to_seconds = {"5 sec": 5, "1 min": 60, "5 min": 300, "10 min": 600,\
                      "15 min": 900, "30 min": 1800, "45 min": 2700, "1 hr": 3600}
@@ -37,6 +42,7 @@ options = FaceLandmarkerOptions(
     num_faces=1)
 
 # Face mesh detector
+print(MODEL_PATH)
 landmarker = FaceLandmarker.create_from_options(options)
 
 # Start detection
