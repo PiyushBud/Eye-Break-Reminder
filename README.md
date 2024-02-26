@@ -17,7 +17,7 @@ Once the selected max screen time is hit, a break reminder will be pushed
 
 ## Demo
 
-
+https://github.com/PiyushBud/Eye-Break-Reminder/assets/93603829/12f41306-09cb-42cf-96d6-b4b80a150631
 
 ## Mechanisms
 Uses mediapipe library's facemesh to track users pupils and other facial features. The user calibrates pupil location relative to surrounding facial features
